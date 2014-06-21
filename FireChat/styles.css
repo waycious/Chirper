@@ -1,0 +1,21 @@
+﻿.red {
+    color: red;
+}
+
+.light-gray {
+    color: #ccc;
+}
+
+.scroll {
+    height: 400px;
+    overflow: auto;
+}
+
+.scroll-sm {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.green {
+    color: green;
+}
