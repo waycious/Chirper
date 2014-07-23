@@ -6,85 +6,97 @@
     <title></title>
 </head>
 <body>
-    
-    <div class="container">
-        <nav class="navbar navbar-default col-md-10 column col-md-offset-1">
-            <ul class="nav navbar-nav">
-                <li><a href="#" onclick="MyApp.ShowProfile('rando')">View Profile</a></li>
-                <li><a href="#" onclick="MyApp.ShowEditProfile()">Edit Profile</a></li>
-            </ul>
-        </nav>
-        <div class="row clearfix">
-            <div class="col-md-7 column col-md-offset-1" id="chirps">
-                <div class="scroll" id="message-box">
-                    <table class="table" id="messages"></table>
-                </div>
-                <input type="text" id="who" />
-                <input type="text" id="message" />
-                <button onclick="MyApp.PostMessage();">Send</button>
+    <div id="alert"></div>
+    <div id="login" class="jumbotron">
+        <div class="container login-top-margin">
+
+            <span class="birdlogo">_</span>
+
+            <h2>Chirper</h2>
+            <div class="box">
+                <input id="url" type="text" placeholder="Firebase URL base">
+                <input id="name" type="text" placeholder="Display name">
+                <button id="login-button" class="btn btn-default full-width" onclick="MyApp.Login()"><span class="glyphicon glyphicon-ok"></span></button>
             </div>
-            <div class="col-md-3 column" id="friends">
-                <div class="scroll">
-                    <table class="table" id="friend-list"></table>
-                </div>
-                
-                <input type="text" id="friend" />
-                <button onclick="MyApp.AddFriend();">Send</button>
-            </div>
-        </div>     
+        </div>
     </div>
+    <div id="chat">
+        <div class="container">
+            <nav class="navbar navbar-default col-md-10 column col-md-offset-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="#" onclick="MyApp.ShowProfile('rando')">View Profile</a></li>
+                    <li><a href="#" onclick="MyApp.ShowEditProfile()">Edit Profile</a></li>
+                </ul>
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-7 column col-md-offset-1" id="chirps">
+                    <div class="scroll" id="message-box">
+                        <table class="table" id="messages"></table>
+                    </div>
+                    <input type="text" id="message" />
+                    <button onclick="MyApp.PostMessage();">Send</button>
+                </div>
+                <div class="col-md-3 column" id="friends">
+                    <div class="scroll">
+                        <table class="table" id="friend-list"></table>
+                    </div>
 
-    <!-- Begin Profile Modal -->
+                    <input type="text" id="friend" />
+                    <button onclick="MyApp.AddFriend();">Send</button>
+                </div>
+            </div>
+        </div>
 
-    <div class="modal fade" id="profile-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="modal-title">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <img id="profile-image" class="img-thumbnail img-responsive"/>
-                 
-                </div>
-                <div class="modal-body scroll-sm">
-                    <p id="profile-bio"></p>
-                </div>
-                <div class="modal-body scroll-sm">
-                    <div id="friends-friends"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        <!-- Begin Profile Modal -->
 
-    <!-- Begin Edit Profile Modal -->
+        <div class="modal fade" id="profile-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <img id="profile-image" class="img-thumbnail img-responsive" />
 
-    <div class="modal fade" id="edit-profile-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="edit-modal-title">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <input id="edit-profile-name" placeholder="Profile Name" class="form-control"/>
-                    <input id="edit-profile-bio" placeholder="Profile Bio" class="form-control" />
-                    <input id="edit-profile-image" placeholder="Profile Image" class="form-control" />
-                </div>
-                <div class="modal-body">
-                    <p id="profile-bio"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="MyApp.SaveProfile()">Save changes</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+                    </div>
+                    <div class="modal-body scroll-sm">
+                        <p id="profile-bio"></p>
+                    </div>
+                    <div class="modal-body scroll-sm">
+                        <div id="friends-friends"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- Begin Edit Profile Modal -->
 
+        <div class="modal fade" id="edit-profile-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="edit-modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input id="edit-profile-name" placeholder="Profile Name" class="form-control" />
+                        <input id="edit-profile-bio" placeholder="Profile Bio" class="form-control" />
+                        <input id="edit-profile-image" placeholder="Profile Image" class="form-control" />
+                    </div>
+                    <div class="modal-body">
+                        <p id="profile-bio"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="MyApp.SaveProfile()">Save changes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
 
     <script src="Scripts/jQuery.Bootstrap.min.js"></script>
     <script src="script.js"></script>

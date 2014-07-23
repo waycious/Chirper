@@ -1,13 +1,17 @@
-﻿//var inter = setInterval(1000, fireAlarm);
-//var out = setTimeout(1000, fireAlarm);
-
-var MyApp = {};
+﻿var MyApp = {};
 MyApp.Profile = {};
+MyApp.AuthorName = "";
 MyApp.Messages = {};
 MyApp.Friends = [];
-MyApp.UrlBase = "rando";
+MyApp.UrlBase = "";
 MyApp.Friends = {};
 MyApp.DisplayMessages = [];
+
+
+document.getElementById("login").style.display = "";
+document.getElementById("chat").style.display = "none";
+
+
 
 MyApp.WriteMessages = function () {
     MyApp.DisplayMessages = [];
@@ -73,7 +77,7 @@ MyApp.UrlHelper = function (base) {
     return url;
 };
 
-MyApp.Ajax = function (method, url, SendingData, success) {
+MyApp.Ajax = function (method, url, SendingData, success, error) {
     var request = new XMLHttpRequest();
     request.open(method, url);
     request.onload = function () {
@@ -81,42 +85,43 @@ MyApp.Ajax = function (method, url, SendingData, success) {
             var data = JSON.parse(this.response);
             success(data);
         } else {
-            console.log("Comm Error on " + method + " sent to" + url + this.response);
+            console.log("Error on " + method);
+            error();
         }
     };
     request.onerror = function () {
-        console.log("Comm Error on " + method + " sent to" + url);
+        console.log("Comm error on " + method);
+        error();
     };
     if (SendingData) {
         SendingData = JSON.stringify(SendingData);
     }
     request.send(SendingData);
 };
-MyApp.Get = function (url, success) {
-    MyApp.Ajax("GET", url, null, success);
+MyApp.Get = function (url, success, error) {
+    MyApp.Ajax("GET", url, null, success, error);
 };
-MyApp.Post = function (url, data, success) {
-    MyApp.Ajax("POST", url, data, success);
+MyApp.Post = function (url, data, success, error) {
+    MyApp.Ajax("POST", url, data, success), error;
 };
-MyApp.Delete = function (url, success) {
-    MyApp.Ajax("DELETE", url, null, success);
+MyApp.Delete = function (url, success, error) {
+    MyApp.Ajax("DELETE", url, null, success, error);
 };
-MyApp.Patch = function (url, data, success) {
-    MyApp.Ajax("PATCH", url, data, success);
+MyApp.Patch = function (url, data, success, error) {
+    MyApp.Ajax("PATCH", url, data, success, error);
 };
 
-MyApp.PostMessage = function (base) {
-    if (!base) { var base = document.getElementById("who").value; }
+MyApp.PostMessage = function () {
     var text = document.getElementById("message").value;
-    var msg = new MyApp.Message(text, "Nasser");
+    var msg = new MyApp.Message(text, MyApp.AuthorName);
     msg.timestamp = Date.now();
     var addMsgObject = function (data) {
         msg.key = data.name;
-        msg.url = base;
+        msg.url = MyApp.UrlBase;
         MyApp.Messages[data.name] = msg;
         MyApp.WriteMessages();
     }
-    MyApp.Post(MyApp.UrlHelper(base, "messages"), msg, addMsgObject);
+    MyApp.Post(MyApp.UrlHelper(MyApp.UrlBase, "messages"), msg, addMsgObject);
     document.getElementById("message").value = "";
 };
 
@@ -171,17 +176,7 @@ MyApp.DeleteMessage = function (key) {
     MyApp.Delete(MyApp.UrlHelper(MyApp.UrlBase, "messages", key), removeMessage);
 }
 
-MyApp.AddFriend = function (url) {
-    var friend = {};
-    if (url) { friend.url = url }
-    else { friend.url = document.getElementById("friend").value };
-    var updateFriendArray = function (data) {
-        friend.key = data.name;
-        MyApp.Friends[key] = friend;
-        MyApp.GetFriends();
-    }
-    MyApp.Post(MyApp.UrlHelper(MyApp.UrlBase, "friends"), friend, updateFriendArray)
-};
+
 MyApp.GetFriends = function () {
     var updateFriendList = function (data) {
         for (var i in MyApp.Friends) {
@@ -201,6 +196,7 @@ MyApp.GetFriends = function () {
     };
     MyApp.Get(MyApp.UrlHelper(MyApp.UrlBase, "friends"), updateFriendList);
 };
+
 MyApp.WriteFriends = function () {
     var holder = "";
     for (var i in MyApp.Friends) {
@@ -215,6 +211,22 @@ MyApp.WriteFriends = function () {
         holder += '</tr>';
     }
     document.getElementById("friend-list").innerHTML = holder;
+};
+MyApp.AddFriend = function (url) {
+    var friend = {};
+    friend.shown = true;
+    if (url) { friend.url = url }
+    else {
+        friend.url = document.getElementById("friend").value;
+        document.getElementById("friend").value = "";
+    };
+    var updateFriendArray = function (data) {
+        friend.key = data.name;
+        MyApp.Friends[friend.key] = friend;
+        MyApp.GetFriends();
+        MyApp.WriteFriends();
+    }
+    MyApp.Post(MyApp.UrlHelper(MyApp.UrlBase, "friends"), friend, updateFriendArray);
 };
 MyApp.ToggleShowFriend = function (key) {
     MyApp.Messages = {};
@@ -278,6 +290,32 @@ MyApp.SaveProfile = function () {
     MyApp.Delete(MyApp.UrlHelper(MyApp.UrlBase, "profile"), replace);
     
 }
+MyApp.Login = function () {
+    MyApp.UrlBase = document.getElementById("url").value;
+    MyApp.AuthorName = document.getElementById("name").value;
+    
 
+    var login = function () {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("chat").style.display = "";
+        MyApp.GetFriends();
+    };
+    var showError = function () {
+        var urlInput = document.getElementById("url");
+        urlInput.focus();
+        urlInput.select();
+        MyApp.UrlBase = document.getElementById("url").value;
+        document.getElementById("alert").innerHTML =
+        '<div id="error-alert" class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Couldn\'t connect to Firebase account.</div>';
+        $("#error-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#error-alert").alert('close');
+        });
+    };
+    MyApp.Get(MyApp.UrlHelper(MyApp.UrlBase, "profile"), login, showError);
+};
 
-MyApp.GetFriends();
+$("#url").keyup(function (event) {
+    if (event.keyCode == 13) {
+        $("#login-button").click();
+    }
+});
